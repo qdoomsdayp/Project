@@ -10,45 +10,99 @@
 <head>
     <meta cgarset = "utf-8">
     <link rel="stylesheet" href="/roll.css" type="text/css">
-    <title>Страница</title>
+    <title>Роли</title>
+    <style>
+        .main{
+            width: 1000px;
+            margin: 0 auto;
+        }
+        .list,.Delete,.Edit,.Input{
+            display: inline-block;
+        }
+
+    </style>
 </head>
 
-<body>
-<h1 class="ttt">
-    Роли
-</h1>
+<body onload="OutputValues()">
+<form name = "rolls" action="Rolls.java" method="post">
+    <input type="hidden" id="command" value="" name = "command">
     <div class = "main">
+        <h1>
+            Роли
+        </h1>
         <div class = "list">
         <select name = "Rolls">
             <option value = "rolls" selected>Выберете роль</option>
         </select>
         </div>
 <div class = "Input">
-        <form action="Users.java" method="post">
 
-            <input  type="submit" name = "Input" value="Добавить">
 
-        </form>
+            <input  type="submit" name = "Input" value="Добавить" onclick="document.getElementById('command').value = 'Input';
+            document.rolls.submit(); " >
+
+
 </div>
         <div class = "Edit">
-        <form action="Users.java" method="post">
 
-            <input  type="submit" name = "Edit" value="Редактировать">
+            <input  type="submit" name = "Edit" value="Редактировать" onclick="document.getElementById('command').value = 'Edit';
+        document.rolls.submit(); " >
 
-        </form>
         </div>
         <div class = "Delete">
-        <form action="Users.java" method="post">
 
-            <input  type="submit" name = "Delete" value="Удалить">
+            <input  type="submit" name = "Delete" value="Удалить" onclick="document.getElementById('command').value = 'Delete';
+            document.rolls.submit(); " >
 
-        </form>
         </div>
+        <div>
+            <table>
+                <tr>
+                    <td>ИД роли</td>
+                    <td><input type = "text"></td>
+                </tr>
+                <tr>
+                    <td>имя роли</td>
+                    <td><input type = "text"></td>
+                </tr>
+            </table>
+        </div>
+
     </div>
 
+</form>
+
+<script type = "text/javascript">
+    function getValuesByValue(index){
+
+        return index.split(","); // преобразуем строку в массив значений
+    }
+
+    function OutputValues() {
 
 
 
+        aCurrValues = getValuesByValue("<%=request.getAttribute("data")%>");
+        var nCurrValuesCnt = aCurrValues.length;
+        var oListL = document.forms["rolls"].elements["Rolls"];
 
+        var oListOptionsCnt = oListL.options.length;
+        oListL.length = 0; // удаляем все элементы из списка значений
+        for (i = 0; i < nCurrValuesCnt; i++) {
+            // далее мы добавляем необходимые значения в список
+            if (document.createElement) {
+                var newListOption = document.createElement("OPTION");
+                newListOption.text = aCurrValues[i];
+                newListOption.value = aCurrValues[i];
+                // тут мы используем для добавления элемента либо метод IE, либо DOM
+                (oListL.options.add) ? oListL.options.add(newListOption) : oListL.add(newListOption, null);
+            } else {
+                // для NN3.x-4.x
+                oListL.options[i] = new Option(aCurrValues[i], aCurrValues[i], false, false);
+            }
+        }
+    }
+
+</script>
 </body>
 </html>

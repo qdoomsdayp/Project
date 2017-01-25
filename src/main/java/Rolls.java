@@ -10,36 +10,40 @@ import java.lang.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-@WebServlet("/")
-public class Users extends HttpServlet {
-private static final String URL = "jdbc:mysql://localhost:3306/mysql";
-private static final String USERNAME = "root";
-private static final String PASSWORD = "1234";
+@WebServlet("/rolls")
+public class Rolls extends HttpServlet {
+    private static final String URL = "jdbc:mysql://localhost:3306/mysql";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "1234";
 
     @Override
     public void init() throws ServletException {
-    Con();
+        Con();
 
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-              try {
+        //request.getRequestDispatcher("rolls.jsp").forward(request, response);
+
+
+
+        try {
             Connection conn = new Connect().getConnect(URL,USERNAME,PASSWORD);
             Statement statement = conn.createStatement();
 
-            ResultSet resultSet = statement.executeQuery("select NAME from usersandrolls.users ");
-            String name = "";
+            ResultSet resultSet = statement.executeQuery("select id_roll from usersandrolls.rolls ");
+            String id_roll = "";
             while(resultSet.next()){
-                if (name == "")
-                    name = resultSet.getString("name");
+                if (id_roll == "")
+                    id_roll = resultSet.getString("id_roll");
                 else
-                    name =name +","+ resultSet.getString("name");
+                    id_roll =id_roll +","+ resultSet.getString("id_roll");
             }
-            name.trim();
-            request.setAttribute("data",name);
-            //System.out.println(name);
+            id_roll.trim();
+            request.setAttribute("data",id_roll);
+           // System.out.println(id_roll);
 
 
 
@@ -48,7 +52,7 @@ private static final String PASSWORD = "1234";
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        request.getRequestDispatcher("users.jsp").forward(request, response);
+        request.getRequestDispatcher("rolls.jsp").forward(request, response);
 
     }
 
@@ -71,10 +75,10 @@ private static final String PASSWORD = "1234";
 
 
 
-      //  String expression = request.getParameter("expression");
+        //  String expression = request.getParameter("expression");
 
         System.out.println(command);
-       // doGet(request,response);
+        // doGet(request,response);
 
 
     }
