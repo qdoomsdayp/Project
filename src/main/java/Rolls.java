@@ -43,7 +43,7 @@ public class Rolls extends HttpServlet {
             }
             id_roll.trim();
             request.setAttribute("data",id_roll);
-           // System.out.println(id_roll);
+            System.out.println(id_roll);
 
 
 
