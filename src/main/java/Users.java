@@ -27,9 +27,8 @@ Con();
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        //request.getRequestDispatcher("users.jsp").forward(request, response);
-        System.out.println("asfsdf");
-
+        //request.getRequestDispatcher("rolls.jsp").forward(request, response);
+        request.getRequestDispatcher("rolls.jsp").forward(request, response);
     }
 
 
