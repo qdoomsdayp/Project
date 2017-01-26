@@ -8,6 +8,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+    <script type = "text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+
     <meta cgarset = "utf-8">
     <link rel="stylesheet" href="/roll.css" type="text/css">
     <title>Пользователи</title>
@@ -28,21 +30,20 @@
 
 
 <form name = "users" action="Users.java" method="post">
-    <input type="hidden" id="command" value="" name = "command">
+
 <div class = "main">
     <h1>
         Пользователи
     </h1>
     <div class = "list">
-        <select name = "Users" >
+        <select name = "Users" id = "id_Users" onchange="selectList()">
             <option value = "user" selected>Выберете пользователя</option>
         </select>
     </div>
     <div class = "Input">
 
 
-            <input  type="button" name = "Input" value="Добавить" onclick="document.getElementById('command').value = 'Input';
-            document.users.submit(); " >
+            <input  type="button" name = "Input" value="Добавить" onclick="check(this.form)" >
 
     </div>
     <div class = "Edit">
@@ -60,20 +61,16 @@
     <div>
         <table>
             <tr>
-                <td>ИД пользователя</td>
-                <td><input type = "text"></td>
-            </tr>
-            <tr>
                 <td>имя пользователя</td>
-                <td><input type = "text"></td>
+                <td><input type = "text"  id = "Tname" name = "nameUser"></td>
             </tr>
             <tr>
                 <td>E-mail пользователя</td>
-                <td><input type = "text"></td>
+                <td><input type = "text" name = "email" id = "Temail"></td>
             </tr>
             <tr>
                 <td>ИД роли</td>
-                <td><input type = "text"></td>
+                <td><input type = "text" name = "idRoll" id = "Tidroll"></td>
             </tr>
         </table>
         <a href = "http://localhost:8080/rolls">Роли</a>
@@ -86,6 +83,38 @@
 
 
 <script type = "text/javascript">
+
+    function selectList() {
+
+        $.ajax({
+            type: "POST",
+            url: "DataBase",
+            data: {type: "selectList",name: document.getElementById("id_Users").value, id: '123'},
+            async: false,
+            dataType: "json",
+
+            //if received a response from the server
+            success: function( data, textStatus, jqXHR) {
+                //our country code was correct so we have some information to display
+
+                $("#Tname").val(data.nam);
+                $("#Temail").val(data.emai);
+                $("#Tidroll").val(data.idrol);
+
+                if(data.success){
+
+                }
+                //display error message
+                else {
+                    $("#ajaxResponse").html("<div><b>Country code in Invalid!</b></div>");
+                }
+            },
+            error: function (data) {
+                alert(data);
+            }
+    })
+    }
+
     function getValuesByValue(index){
 
         return index.split(","); // преобразуем строку в массив значений
@@ -114,8 +143,56 @@
                 oListL.options[i] = new Option(aCurrValues[i], aCurrValues[i], false, false);
             }
         }
+
+
+
     }
 
+
+    function showError(container, errorMessage) {
+        container.className = 'error';
+        var msgElem = document.createElement('span');
+        msgElem.className = "error-message";
+        msgElem.innerHTML = errorMessage;
+        container.appendChild(msgElem);
+    }
+
+    function resetError(container) {
+        container.className = '';
+        if (container.lastChild.className == "error-message") {
+            container.removeChild(container.lastChild);
+        }
+    }
+
+    function check(form) {
+        var elems = form.elements;
+
+        resetError(elems.nameUser.parentNode);
+        resetError(elems.email.parentNode);
+        resetError(elems.idRoll.parentNode);
+
+        if (!elems.nameUser.value) {
+            showError(elems.nameUser.parentNode, ' Не верный ИД пользователя');
+        } else if (!elems.email.value) {
+            showError(elems.email.parentNode, ' Не верный ИД пользователя');
+        }else if (!elems.idRoll.value) {
+            showError(elems.idRoll.parentNode, ' Не верный ИД пользователя');
+        }
+        else{
+            document.getElementById('command').value = 'Input'
+            document.forms['users'].submit();}
+    }
+
+ function selectValue(index) {
+
+
+     document.forms['users'].submit();
+
+
+
+     alert(document.getElementById('nameUser').value = <%=request.getAttribute("nam") %>);
+
+ }
 </script>
 
 

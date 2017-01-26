@@ -1,4 +1,5 @@
 import com.sun.org.apache.xpath.internal.operations.Number;
+import org.json.simple.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -6,30 +7,35 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-@WebServlet("/")
+@WebServlet( "/")
 public class Users extends HttpServlet {
-private static final String URL = "jdbc:mysql://localhost:3306/mysql";
+
 private static final String USERNAME = "root";
 private static final String PASSWORD = "1234";
+    Connection conn;
 
     @Override
     public void init() throws ServletException {
-    Con();
-
+            try {
+            this.conn = new Connect().getConnect(USERNAME,PASSWORD);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
               try {
-            Connection conn = new Connect().getConnect(URL,USERNAME,PASSWORD);
-            Statement statement = conn.createStatement();
-
-            ResultSet resultSet = statement.executeQuery("select NAME from usersandrolls.users ");
+            PreparedStatement preparedStatement = conn.prepareStatement("select NAME from usersandrolls.users");
+            ResultSet resultSet = preparedStatement.executeQuery();
             String name = "";
             while(resultSet.next()){
                 if (name == "")
@@ -39,13 +45,9 @@ private static final String PASSWORD = "1234";
             }
             name.trim();
             request.setAttribute("data",name);
-            //System.out.println(name);
-
 
 
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         request.getRequestDispatcher("users.jsp").forward(request, response);
@@ -57,39 +59,24 @@ private static final String PASSWORD = "1234";
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        method(request, response);
-
-    }
-
-    private void method(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String command = request.getParameter( "command" ) ;
-        switch (command){
-
-        }
-
-
-
-      //  String expression = request.getParameter("expression");
-
-        System.out.println(command);
-       // doGet(request,response);
-
-
-    }
-    public void Con(){
         try {
-            Connect con = new Connect();
-            Connection conn = con.getConnect(URL,USERNAME,PASSWORD);
-
-
+            method(request, response);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+
     }
+
+    private void method(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
+
+
+
+
+    }
+
 
 
 

@@ -12,28 +12,27 @@ import java.util.ArrayList;
 
 @WebServlet("/rolls")
 public class Rolls extends HttpServlet {
-    private static final String URL = "jdbc:mysql://localhost:3306/mysql";
+
     private static final String USERNAME = "root";
     private static final String PASSWORD = "1234";
-
+    Connection conn;
     @Override
     public void init() throws ServletException {
-        Con();
+        try {
+            this.conn = new Connect().getConnect(USERNAME,PASSWORD);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        //request.getRequestDispatcher("rolls.jsp").forward(request, response);
-
-
-
         try {
-            Connection conn = new Connect().getConnect(URL,USERNAME,PASSWORD);
-            Statement statement = conn.createStatement();
-
-            ResultSet resultSet = statement.executeQuery("select id_roll from usersandrolls.rolls ");
+PreparedStatement preparedStatement = conn.prepareStatement("select id_roll from usersandrolls.rolls ");
+            ResultSet resultSet = preparedStatement.executeQuery();
             String id_roll = "";
             while(resultSet.next()){
                 if (id_roll == "")
@@ -48,8 +47,6 @@ public class Rolls extends HttpServlet {
 
 
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         request.getRequestDispatcher("rolls.jsp").forward(request, response);
@@ -68,32 +65,12 @@ public class Rolls extends HttpServlet {
     private void method(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String command = request.getParameter( "command" ) ;
-        switch (command){
-
-        }
 
 
-
-        //  String expression = request.getParameter("expression");
-
-        System.out.println(command);
-        // doGet(request,response);
 
 
     }
-    public void Con(){
-        try {
-            Connect con = new Connect();
-            Connection conn = con.getConnect(URL,USERNAME,PASSWORD);
 
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 
 
 
