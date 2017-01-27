@@ -12,17 +12,17 @@ import java.lang.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-@WebServlet( "/")
+@WebServlet("/")
 public class Users extends HttpServlet {
 
-private static final String USERNAME = "root";
-private static final String PASSWORD = "1234";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "1234";
     Connection conn;
 
     @Override
     public void init() throws ServletException {
-            try {
-            this.conn = new Connect().getConnect(USERNAME,PASSWORD);
+        try {
+            this.conn = new Connect().getConnect(USERNAME, PASSWORD);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -33,19 +33,29 @@ private static final String PASSWORD = "1234";
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-              try {
+        try {
             PreparedStatement preparedStatement = conn.prepareStatement("select NAME from usersandrolls.users");
+            PreparedStatement preparedStatement1 = conn.prepareStatement("select NAME from usersandrolls.rolls");
             ResultSet resultSet = preparedStatement.executeQuery();
             String name = "";
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 if (name == "")
                     name = resultSet.getString("name");
                 else
-                    name =name +","+ resultSet.getString("name");
+                    name = name + "," + resultSet.getString("name");
             }
             name.trim();
-            request.setAttribute("data",name);
-
+            request.setAttribute("data", name);
+            resultSet = preparedStatement1.executeQuery();
+            name = "";
+            while (resultSet.next()) {
+                if (name == "")
+                    name = resultSet.getString("name");
+                else
+                    name = name + "," + resultSet.getString("name");
+            }
+            name.trim();
+            request.setAttribute("nameR", name);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -53,8 +63,6 @@ private static final String PASSWORD = "1234";
         request.getRequestDispatcher("users.jsp").forward(request, response);
 
     }
-
-
 
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -73,17 +81,11 @@ private static final String PASSWORD = "1234";
             throws ServletException, IOException, SQLException, ClassNotFoundException {
 
 
-
-
     }
-
-
 
 
     public void destroy() {
     }
-
-
 
 
 }

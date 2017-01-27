@@ -31,18 +31,18 @@ public class Rolls extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-PreparedStatement preparedStatement = conn.prepareStatement("select id_roll from usersandrolls.rolls ");
+            PreparedStatement preparedStatement = conn.prepareStatement("select name from usersandrolls.rolls ");
             ResultSet resultSet = preparedStatement.executeQuery();
             String id_roll = "";
             while(resultSet.next()){
                 if (id_roll == "")
-                    id_roll = resultSet.getString("id_roll");
+                    id_roll = resultSet.getString("name");
                 else
-                    id_roll =id_roll +","+ resultSet.getString("id_roll");
+                    id_roll =id_roll +","+ resultSet.getString("name");
             }
             id_roll.trim();
             request.setAttribute("data",id_roll);
-            System.out.println(id_roll);
+
 
 
 
