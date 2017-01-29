@@ -12,7 +12,7 @@ import java.lang.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-@WebServlet("/")
+@WebServlet("/us")
 public class Users extends HttpServlet {
 
     private static final String USERNAME = "root";
@@ -34,20 +34,11 @@ public class Users extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("select NAME from usersandrolls.users");
+
             PreparedStatement preparedStatement1 = conn.prepareStatement("select NAME from usersandrolls.rolls");
-            ResultSet resultSet = preparedStatement.executeQuery();
+
+            ResultSet resultSet = preparedStatement1.executeQuery();
             String name = "";
-            while (resultSet.next()) {
-                if (name == "")
-                    name = resultSet.getString("name");
-                else
-                    name = name + "," + resultSet.getString("name");
-            }
-            name.trim();
-            request.setAttribute("data", name);
-            resultSet = preparedStatement1.executeQuery();
-            name = "";
             while (resultSet.next()) {
                 if (name == "")
                     name = resultSet.getString("name");
@@ -57,6 +48,30 @@ public class Users extends HttpServlet {
             name.trim();
             request.setAttribute("nameR", name);
 
+            ResultSet resultSet1;
+            PreparedStatement preparedStatement = conn.prepareStatement("select * from usersandrolls.users");
+            resultSet = preparedStatement.executeQuery();
+            String str = "";
+            while (resultSet.next()) {
+                preparedStatement1 = conn.prepareStatement("select NAME from usersandrolls.rolls where id_roll = "
+                        + resultSet.getInt("id_roll"));
+                resultSet1 = preparedStatement1.executeQuery();
+                resultSet1.next();
+                if (str == "") {
+                    str = resultSet.getString("id_users") +
+                            "," + resultSet.getString("name") +
+                            "," + resultSet.getString("email") +
+                            "," + resultSet1.getString("name");
+                } else {
+                    str = str + "," + resultSet.getString("id_users") +
+                            "," + resultSet.getString("name") +
+                            "," + resultSet.getString("email") +
+                            "," + resultSet1.getString("name");
+                }
+
+            }
+            str.trim();
+            request.setAttribute("table",str);
         } catch (SQLException e) {
             e.printStackTrace();
         }

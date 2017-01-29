@@ -18,10 +18,11 @@ public class DataBase extends HttpServlet {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "1234";
     Connection conn;
+
     @Override
     public void init() throws ServletException {
         try {
-            this.conn = new Connect().getConnect(USERNAME,PASSWORD);
+            this.conn = new Connect().getConnect(USERNAME, PASSWORD);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -36,8 +37,6 @@ public class DataBase extends HttpServlet {
     }
 
 
-
-
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -50,233 +49,175 @@ public class DataBase extends HttpServlet {
 
     private void method(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-
-
-
-
-
-        String command1 = request.getParameter( "type" ) ;
+        String command1 = request.getParameter("type");
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        switch (command1){
+        switch (command1) {
             case "add": {
-                String name = request.getParameter("name");
-                String email = request.getParameter("email");
-                String idroll = request.getParameter("idroll");
-                PreparedStatement preparedStatement1 = conn.prepareStatement("SELECT id_roll FROM usersandrolls.rolls " +
-                        "WHERE name = "+"\""+idroll+"\"");
-                ResultSet resultSet = preparedStatement1.executeQuery();
-                resultSet.next();
-                int tmp = resultSet.getInt("id_roll");
-                PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO usersandrolls.users " +
-                        "(name,email,id_roll) VALUES (?,?,?)");
-                preparedStatement.setString(1, name);
-                preparedStatement.setString(2, email);
-                preparedStatement.setInt(3, tmp);
-                preparedStatement.executeUpdate();
-                String listName = checkUsers();
-                try (PrintWriter out = response.getWriter()) {
-                    JSONObject jsonEnt = new JSONObject();
-
-                    jsonEnt.put("listName",listName);
-
-                    out.print(jsonEnt.toString());
-                }
+                add(request, response);
                 break;
             }
-            case "selectList": {
 
-                String edit = request.getParameter("name");
-                PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM usersandrolls.users WHERE name ="+"\""+edit+"\"");
-                ResultSet resultSet = preparedStatement.executeQuery();
-                resultSet.next();
-                String name = resultSet.getString("name");
-                String email = resultSet.getString("email");
-                int allid = resultSet.getInt("id_users");
-                int idroll = resultSet.getInt("id_roll");
-                PreparedStatement preparedStatement1 = conn.prepareStatement("SELECT * FROM usersandrolls.rolls WHERE id_roll ="+idroll);
-                resultSet = preparedStatement1.executeQuery();
-                resultSet.next();
-                String idna  = resultSet.getString("name");
-                try (PrintWriter out = response.getWriter()) {
-                    JSONObject jsonEnt = new JSONObject();
-
-                    jsonEnt.put("nam",name);
-                    jsonEnt.put("emai", email);
-                    jsonEnt.put("allId", allid);
-                    jsonEnt.put("idrol",idna);
-
-                    out.print(jsonEnt.toString());
-                }
-
-
-
-
-                break;
-            }
             case "edit": {
-                String edit = request.getParameter("nameS");
-                String name = request.getParameter("nameI");
-                String email = request.getParameter("emailI");
-                String idroll = request.getParameter("idrollI");
-                PreparedStatement preparedStatement1 = conn.prepareStatement("SELECT id_roll FROM usersandrolls.rolls where name = "+"\""+idroll+"\"");
-                ResultSet resultSet = preparedStatement1.executeQuery();
-                resultSet.next();
-                int tmp = resultSet.getInt("id_roll");
-                PreparedStatement preparedStatement = conn.prepareStatement("UPDATE usersandrolls.users SET name =?,email = ?,id_roll = ? WHERE name = ?");
-                preparedStatement.setString(1,name);
-                preparedStatement.setString(2,email);
-                preparedStatement.setInt(3,tmp);
-                preparedStatement.setString(4,edit);
-                preparedStatement.executeUpdate();
-                String listName = checkUsers();
-                try (PrintWriter out = response.getWriter()) {
-                    JSONObject jsonEnt = new JSONObject();
-
-                    jsonEnt.put("listName",listName);
-
-                    out.print(jsonEnt.toString());
-                }
-
-
-
+                edit(request, response);
                 break;
             }
             case "delete": {
-                String delet = request.getParameter("nameS");
-
-                PreparedStatement preparedStatement = conn.prepareStatement("DELETE from usersandrolls.users  WHERE name = ?");
-                preparedStatement.setString(1,delet);
-                preparedStatement.executeUpdate();
-                String listName = checkUsers();
-                try (PrintWriter out = response.getWriter()) {
-                    JSONObject jsonEnt = new JSONObject();
-
-                    jsonEnt.put("listName",listName);
-
-                    out.print(jsonEnt.toString());
-                }
-
-
-
+                delete(request, response);
                 break;
             }
             case "addr": {
-                String name = request.getParameter("name");
-                PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO usersandrolls.rolls " +
-                        "(name) VALUES (?)");
-                preparedStatement.setString(1, name);
-                preparedStatement.executeUpdate();
-                String listName = checkRolls();
-                try (PrintWriter out = response.getWriter()) {
-                    JSONObject jsonEnt = new JSONObject();
-
-                    jsonEnt.put("listName",listName);
-
-                    out.print(jsonEnt.toString());
-                }
+                addr(request, response);
                 break;
             }
             case "selectListR": {
-
-                String edit = request.getParameter("name");
-
-                try (PrintWriter out = response.getWriter()) {
-                    JSONObject jsonEnt = new JSONObject();
-
-                    jsonEnt.put("nam",edit);
-
-                    out.print(jsonEnt.toString());
-                }
-
-
-
-
+                selectListR(request, response);
                 break;
             }
             case "editr": {
-                String edit = request.getParameter("nameS");
-                String name = request.getParameter("nameI");
-                PreparedStatement preparedStatement = conn.prepareStatement("UPDATE usersandrolls.rolls SET name =? WHERE name = ?");
-                preparedStatement.setString(1,name);
-                preparedStatement.setString(2,edit);
-                preparedStatement.executeUpdate();
-                String listName = checkRolls();
-                try (PrintWriter out = response.getWriter()) {
-                    JSONObject jsonEnt = new JSONObject();
-
-                    jsonEnt.put("listName",listName);
-
-                    out.print(jsonEnt.toString());
-                }
-
-
-
+                editr(request, response);
                 break;
             }
             case "deleter": {
-                String delet = request.getParameter("nameS");
-                PreparedStatement preparedStatement = conn.prepareStatement("DELETE from usersandrolls.rolls  WHERE name = ?");
-                preparedStatement.setString(1,delet);
-                preparedStatement.executeUpdate();
-                String listName = checkRolls();
-                try (PrintWriter out = response.getWriter()) {
-                    JSONObject jsonEnt = new JSONObject();
-
-                    jsonEnt.put("listName",listName);
-
-                    out.print(jsonEnt.toString());
-                }
-
-
-
+                deleter(request, response);
                 break;
             }
 
         }
 
 
-
-
-
-
     }
 
 
-    public String checkUsers() throws SQLException {
-        PreparedStatement preparedStatement = conn.prepareStatement("select NAME from usersandrolls.users");
-        ResultSet resultSet = preparedStatement.executeQuery();
-        String name = "";
-        while(resultSet.next()){
-            if (name == "")
-                name = resultSet.getString("name");
-            else
-                name =name +","+ resultSet.getString("name");
+    public void add(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String idroll = request.getParameter("idroll");
+        PreparedStatement preparedStatement1 = conn.prepareStatement("SELECT id_roll FROM usersandrolls.rolls " +
+                "WHERE name = " + "\"" + idroll + "\"");
+        ResultSet resultSet = preparedStatement1.executeQuery();
+        resultSet.next();
+        int tmp = resultSet.getInt("id_roll");
+        PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO usersandrolls.users " +
+                "(name,email,id_roll) VALUES (?,?,?)");
+        preparedStatement.setString(1, name);
+        preparedStatement.setString(2, email);
+        preparedStatement.setInt(3, tmp);
+        preparedStatement.executeUpdate();
+
+        preparedStatement1 = conn.prepareStatement("SELECT id_users FROM usersandrolls.users " +
+                "WHERE name = " + "\"" + name + "\"" + "and email = " + "\"" + email + "\"" + "and id_roll = " + tmp);
+        resultSet = preparedStatement1.executeQuery();
+        resultSet.next();
+        try (PrintWriter out = response.getWriter()) {
+            JSONObject jsonEnt = new JSONObject();
+            jsonEnt.put("infoU", resultSet.getInt("id_users") + "," + name + "," + email + "," + idroll);
+            out.print(jsonEnt.toString());
         }
-        name.trim();
-        return name;
     }
+
+    public void edit(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        int edit = Integer.parseInt(request.getParameter("nameS"));
+        String name = request.getParameter("nameI");
+        String email = request.getParameter("emailI");
+        String idroll = request.getParameter("idrollI");
+        PreparedStatement preparedStatement1 = conn.prepareStatement("SELECT id_roll FROM usersandrolls.rolls where name = " + "\"" + idroll + "\"");
+        ResultSet resultSet = preparedStatement1.executeQuery();
+        resultSet.next();
+        int tmp = resultSet.getInt("id_roll");
+        PreparedStatement preparedStatement = conn.prepareStatement("UPDATE usersandrolls.users SET name =?,email = ?,id_roll = ? WHERE id_users = " + edit);
+        preparedStatement.setString(1, name);
+        preparedStatement.setString(2, email);
+        preparedStatement.setInt(3, tmp);
+        preparedStatement.executeUpdate();
+        try (PrintWriter out = response.getWriter()) {
+            JSONObject jsonEnt = new JSONObject();
+            jsonEnt.put("dataU", name + "," + email + "," + idroll);
+            out.print(jsonEnt.toString());
+        }
+    }
+
+    public void delete(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        int delet = Integer.parseInt(request.getParameter("nameS"));
+        PreparedStatement preparedStatement = conn.prepareStatement("DELETE from usersandrolls.users  WHERE id_users = ?");
+        preparedStatement.setInt(1, delet);
+        preparedStatement.executeUpdate();
+    }
+
+    public void addr(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        String name = request.getParameter("name");
+        PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO usersandrolls.rolls " +
+                "(name) VALUES (?)");
+        preparedStatement.setString(1, name);
+        preparedStatement.executeUpdate();
+        String listName = checkRolls();
+        try (PrintWriter out = response.getWriter()) {
+            JSONObject jsonEnt = new JSONObject();
+
+            jsonEnt.put("listName", listName);
+
+            out.print(jsonEnt.toString());
+        }
+    }
+
+    public void selectListR(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String edit = request.getParameter("name");
+        try (PrintWriter out = response.getWriter()) {
+            JSONObject jsonEnt = new JSONObject();
+            jsonEnt.put("nam", edit);
+            out.print(jsonEnt.toString());
+        }
+    }
+
+    public void editr(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        String edit = request.getParameter("nameS");
+        String name = request.getParameter("nameI");
+        PreparedStatement preparedStatement = conn.prepareStatement("UPDATE usersandrolls.rolls SET name =? WHERE name = ?");
+        preparedStatement.setString(1, name);
+        preparedStatement.setString(2, edit);
+        preparedStatement.executeUpdate();
+        String listName = checkRolls();
+        try (PrintWriter out = response.getWriter()) {
+            JSONObject jsonEnt = new JSONObject();
+
+            jsonEnt.put("listName", listName);
+
+            out.print(jsonEnt.toString());
+        }
+
+
+    }
+
+    public void deleter(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        String delet = request.getParameter("nameS");
+        PreparedStatement preparedStatement = conn.prepareStatement("DELETE from usersandrolls.rolls  WHERE name = ?");
+        preparedStatement.setString(1, delet);
+        preparedStatement.executeUpdate();
+        String listName = checkRolls();
+        try (PrintWriter out = response.getWriter()) {
+            JSONObject jsonEnt = new JSONObject();
+            jsonEnt.put("listName", listName);
+            out.print(jsonEnt.toString());
+        }
+    }
+
     public String checkRolls() throws SQLException {
         PreparedStatement preparedStatement = conn.prepareStatement("select name from usersandrolls.rolls ");
         ResultSet resultSet = preparedStatement.executeQuery();
         String id_roll = "";
-        while(resultSet.next()){
+        while (resultSet.next()) {
             if (id_roll == "")
                 id_roll = resultSet.getString("name");
             else
-                id_roll =id_roll +","+ resultSet.getString("name");
+                id_roll = id_roll + "," + resultSet.getString("name");
         }
         id_roll.trim();
         return id_roll;
     }
 
 
-
-
     public void destroy() {
     }
-
-
 
 
 }
